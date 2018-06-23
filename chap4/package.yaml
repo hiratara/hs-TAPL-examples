@@ -1,4 +1,4 @@
-name:                hs-TAPL-impl
+name:                tapl-chap4-impl
 version:             0.1.0.0
 github:              "hiratara/hs-TAPL-impl"
 license:             BSD3
@@ -21,23 +21,27 @@ description:         Please see the README on GitHub at <https://github.com/hira
 
 dependencies:
 - base >= 4.7 && < 5
+- bytestring
+- containers
+- megaparsec
 
 library:
   source-dirs: src
 
 executables:
-  hs-TAPL-impl-exe:
+  tapl-chap4-impl:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hs-TAPL-impl
+    - tapl-chap4-impl
 
 tests:
-  hs-TAPL-impl-test:
+  tapl-impl-examples-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -45,4 +49,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hs-TAPL-impl
+    - tapl-chap4-impl
