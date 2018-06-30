@@ -7,6 +7,7 @@ main :: IO ()
 main = do
   note (parse "0")
   note (parse "succ 0")
+  -- note (parse "pred succ 0")
   note (parse "if (iszero (succ 0)) then 0 else (pred (succ 0))")
 
   let term = parse "if (iszero (succ 0)) then 0 else (succ (pred (succ 0)))"

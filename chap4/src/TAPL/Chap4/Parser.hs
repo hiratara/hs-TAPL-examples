@@ -16,7 +16,7 @@ import TAPL.Chap4.Types
 type Parser = M.Parsec Void BS.ByteString
 
 parse :: BS.ByteString -> Term
-parse source = case M.parse term "" source of
+parse source = case M.parse termParser "" source of
   Right x -> x
   Left e -> error (show e)
 
@@ -39,15 +39,21 @@ parens = M.between (symbol "(") (symbol ")")
 rword :: BS.ByteString -> Parser ()
 rword w = (lexeme . M.try) (M.string w *> M.notFollowedBy M.alphaNumChar)
 
-term :: Parser Term
-term = trueTerm
+termParser :: Parser Term
+termParser = M.between sc M.eof term
+
+oneTerm :: Parser Term
+oneTerm = trueTerm
  M.<|> falseTerm
- M.<|> ifTerm
  M.<|> zeroTerm
+ M.<|> parens term
+
+term :: Parser Term
+term = ifTerm
  M.<|> succTerm
  M.<|> predTerm
  M.<|> isZeroTerm
- M.<|> parens term
+ M.<|> oneTerm
 
 trueTerm :: Parser Term
 trueTerm = do
@@ -62,11 +68,11 @@ falseTerm = do
 ifTerm :: Parser Term
 ifTerm = do
   rword "if"
-  cond <- term
+  cond <- oneTerm
   rword "then"
-  stmt1 <- term
+  stmt1 <- oneTerm
   rword "else"
-  stmt2 <- term
+  stmt2 <- oneTerm
   return (TmIf Info cond stmt1 stmt2)
 
 zeroTerm :: Parser Term
@@ -77,17 +83,17 @@ zeroTerm = do
 succTerm :: Parser Term
 succTerm = do
   rword "succ"
-  term1 <- term
+  term1 <- oneTerm
   return (TmSucc Info term1)
 
 predTerm :: Parser Term
 predTerm = do
   rword "pred"
-  term1 <- term
+  term1 <- oneTerm
   return (TmPred Info term1)
 
 isZeroTerm :: Parser Term
 isZeroTerm = do
   rword "iszero"
-  term1 <- term
+  term1 <- oneTerm
   return (TmIsZero Info term1)
